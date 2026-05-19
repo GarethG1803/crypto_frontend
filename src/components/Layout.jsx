@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { usePoints } from '../context/PointsContext'
 import { useAuth } from '../context/AuthContext'
@@ -63,6 +64,7 @@ const navItems = [
 ]
 
 export default function Layout({ children }) {
+  const [sidebarOpen, setSidebarOpen] = useState(true)
   const pointsCtx = usePoints()
   const points = pointsCtx?.points ?? 0
   const animation = pointsCtx?.animation
@@ -71,20 +73,29 @@ export default function Layout({ children }) {
   const nameInitial = displayName ? displayName.charAt(0).toUpperCase() : '?'
 
   return (
-    <div className="layout">
+    <div className={`layout ${sidebarOpen ? '' : 'sidebar-collapsed'}`}>
       <div className="topbar">
-        <div className="topbar-logo">
-          <svg className="logo-mark" width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M18 6C15.5 4 9 5 9 10C9 15 19 13 19 19C19 23.5 13 24.5 9.5 23" stroke="url(#solifyGrad)" strokeWidth="2.8" strokeLinecap="round"/>
-            <circle cx="22" cy="23" r="2.2" fill="#5b7fd6"/>
-            <defs>
-              <linearGradient id="solifyGrad" x1="9" y1="5" x2="19" y2="24">
-                <stop stopColor="#375bbd"/>
-                <stop offset="1" stopColor="#7c9be6"/>
-              </linearGradient>
-            </defs>
-          </svg>
-          <span className="logo-text">Solify<span className="logo-dot">.</span></span>
+        <div className="topbar-left">
+          <button className="sidebar-toggle" onClick={() => setSidebarOpen(v => !v)} title={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div className="topbar-logo">
+            <svg className="logo-mark" width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <path d="M18 6C15.5 4 9 5 9 10C9 15 19 13 19 19C19 23.5 13 24.5 9.5 23" stroke="url(#solifyGrad)" strokeWidth="2.8" strokeLinecap="round"/>
+              <circle cx="22" cy="23" r="2.2" fill="#5b7fd6"/>
+              <defs>
+                <linearGradient id="solifyGrad" x1="9" y1="5" x2="19" y2="24">
+                  <stop stopColor="#375bbd"/>
+                  <stop offset="1" stopColor="#7c9be6"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <span className="logo-text">Solify<span className="logo-dot">.</span></span>
+          </div>
         </div>
         <div className="topbar-right">
           <div className="topbar-points">

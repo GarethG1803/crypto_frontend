@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Layout from '../components/Layout'
 import { getModules, getProgress, getAchievements } from '../services/api'
+import { usePoints } from '../context/PointsContext'
 import lessonsIcon from '../assets/lessons-completed.png'
 import trophyIcon from '../assets/trophy.png'
 import thunderIcon from '../assets/thunder.png'
@@ -27,7 +28,7 @@ export default function Dashboard() {
   const progressPct = Math.round((lessonsCompleted / totalLessons) * 100)
 
   const unlockedAchievements = achievements.filter(a => a.unlocked)
-  const totalPoints = unlockedAchievements.reduce((sum, a) => sum + (a.rewardPoints || 0), 0)
+  const { points: totalPoints } = usePoints()
   const suggested = modules.filter(m => !completedIds.has(m.id)).slice(0, 3)
 
   if (loading) return <Layout><p>Loading...</p></Layout>

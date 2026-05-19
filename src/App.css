@@ -271,7 +271,7 @@
   display: block;
   font-size: 12px;
   margin-top: 4px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .username-status.checking {
@@ -284,6 +284,19 @@
 
 .username-status.taken {
   color: #dc2626;
+}
+
+/* Override username-status colors when inside profile banner */
+.profile-banner .username-status.checking {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.profile-banner .username-status.available {
+  color: #a3ffcc;
+}
+
+.profile-banner .username-status.taken {
+  color: #ffb3b3;
 }
 
 /* ==================== Profile Password Section ==================== */
@@ -482,6 +495,30 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  color: #64748b;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.sidebar-toggle:hover {
+  background: #f1f5f9;
+  color: #374151;
+}
+
 .topbar-logo {
   font-size: 20px;
   font-weight: 700;
@@ -517,6 +554,7 @@
   border-right: 1px solid #e8eaed;
   padding: 24px 0;
   z-index: 90;
+  transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
 .sidebar-nav {
@@ -569,6 +607,18 @@
   min-height: calc(100vh - 64px);
   max-width: calc(100vw - 240px);
   background: #f0f2f5;
+  transition: margin-left 0.25s ease, max-width 0.25s ease;
+}
+
+/* Sidebar collapsed state */
+.sidebar-collapsed .sidebar {
+  transform: translateX(-240px);
+  opacity: 0;
+  pointer-events: none;
+}
+.sidebar-collapsed .main-content {
+  margin-left: 0;
+  max-width: 100vw;
 }
 
 /* ==================== Dashboard ==================== */
@@ -2844,6 +2894,47 @@
   line-height: 1.5;
 }
 
+/* ==================== Simulator Sell All ==================== */
+.sim-sell-all-bar {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.sim-sell-all-btn {
+  width: 100%;
+  padding: 8px 0;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.sim-sell-all-btn:hover {
+  background: #b91c1c;
+}
+
+.sim-sell-one-btn {
+  padding: 4px 12px;
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-top: 2px;
+}
+
+.sim-sell-one-btn:hover {
+  background: #dc2626;
+  color: #fff;
+}
+
 /* ==================== Topbar Points Badge ==================== */
 .topbar-points {
   display: flex;
@@ -3897,4 +3988,381 @@ select.admin-inline-input {
 
 .admin-status-offline {
   color: #636e72;
+}
+
+/* ==================== Futures Trading ==================== */
+
+/* Mode Toggle (Spot / Futures) */
+.sim-mode-toggle {
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 20px;
+  width: fit-content;
+}
+
+.sim-mode-btn {
+  padding: 10px 28px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.sim-mode-btn.active {
+  background: #fff;
+  color: #1a1a2e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.sim-mode-btn:hover:not(.active) {
+  color: #374151;
+}
+
+/* Direction Toggle (Long / Short) */
+.sim-futures-direction-toggle {
+  display: flex;
+}
+
+.sim-futures-dir-btn {
+  flex: 1;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none;
+  background: #f8fafc;
+  color: #94a3b8;
+  border-bottom: 2px solid transparent;
+}
+
+.sim-futures-dir-btn.long.active {
+  background: #fff;
+  color: #16a34a;
+  border-bottom-color: #16a34a;
+}
+
+.sim-futures-dir-btn.short.active {
+  background: #fff;
+  color: #dc2626;
+  border-bottom-color: #dc2626;
+}
+
+.sim-futures-dir-btn:hover:not(.active) {
+  background: #f1f5f9;
+}
+
+/* Leverage Row */
+.sim-futures-leverage-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.sim-futures-lev-btn {
+  flex: 1;
+  padding: 8px 4px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sim-futures-lev-btn:hover {
+  border-color: #375bbd;
+  color: #375bbd;
+}
+
+.sim-futures-lev-btn.active {
+  background: linear-gradient(135deg, #375bbd 0%, #5b7fd6 100%);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 2px 6px rgba(55, 91, 189, 0.25);
+}
+
+/* Position Cards */
+.sim-futures-position {
+  background: #fff;
+  border: 1px solid #e8eaed;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 8px;
+  transition: all 0.15s;
+}
+
+.sim-futures-position:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.sim-futures-pos-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.sim-futures-pos-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sim-futures-dir-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.sim-futures-dir-badge.long {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.sim-futures-dir-badge.short {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.sim-futures-dir-badge.small {
+  font-size: 9px;
+  padding: 1px 5px;
+  margin-left: 4px;
+  border-radius: 3px;
+}
+
+.sim-futures-pos-crypto {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.sim-futures-pos-lev {
+  font-size: 12px;
+  font-weight: 600;
+  color: #375bbd;
+  background: rgba(55, 91, 189, 0.08);
+  padding: 2px 7px;
+  border-radius: 5px;
+}
+
+.sim-futures-pos-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sim-futures-pos-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #64748b;
+  padding: 2px 0;
+}
+
+.sim-futures-pos-row span:last-child {
+  font-weight: 600;
+  color: #374151;
+}
+
+/* P&L Colors */
+.sim-futures-pnl {
+  font-weight: 700 !important;
+}
+
+.sim-futures-pnl.profit {
+  color: #16a34a !important;
+}
+
+.sim-futures-pnl.loss {
+  color: #dc2626 !important;
+}
+
+/* Close Position Button */
+.sim-futures-close-btn {
+  padding: 5px 14px;
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sim-futures-close-btn:hover {
+  background: #dc2626;
+  color: #fff;
+  border-color: #dc2626;
+}
+
+/* Editable TP/SL on position cards */
+.sim-futures-pos-clickable {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.15s;
+}
+.sim-futures-pos-clickable:hover {
+  color: #7b9cff;
+}
+.sim-futures-edit-icon {
+  font-size: 0.7rem;
+  opacity: 0.4;
+  transition: opacity 0.15s;
+}
+.sim-futures-pos-clickable:hover .sim-futures-edit-icon {
+  opacity: 1;
+}
+.sim-futures-edit-orders {
+  padding: 6px 0 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sim-futures-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sim-futures-edit-row label {
+  font-size: 0.75rem;
+  color: #aaa;
+  min-width: 22px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.sim-futures-edit-row input {
+  flex: 1;
+  padding: 5px 8px;
+  font-size: 0.8rem;
+  background: #1a1a2e;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #fff;
+  outline: none;
+}
+.sim-futures-edit-row input:focus {
+  border-color: #375bbd;
+}
+.sim-futures-edit-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+.sim-futures-edit-save {
+  flex: 1;
+  padding: 5px 0;
+  font-size: 0.78rem;
+  background: #375bbd;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.sim-futures-edit-save:hover {
+  background: #2c4a9e;
+}
+.sim-futures-edit-cancel {
+  flex: 1;
+  padding: 5px 0;
+  font-size: 0.78rem;
+  background: transparent;
+  color: #aaa;
+  border: 1px solid #444;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.sim-futures-edit-cancel:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+/* Expandable Tip Labels */
+.sim-tip-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+.sim-tip-label label {
+  cursor: pointer;
+  pointer-events: none;
+}
+.sim-tip-arrow {
+  font-size: 0.7rem;
+  color: #7b9cff;
+  transition: transform 0.2s;
+  line-height: 1;
+}
+.sim-tip-arrow.open {
+  transform: rotate(180deg);
+}
+.sim-tip-box {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 2px 0 6px;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #f1f5f9;
+  animation: simTipSlide 0.15s ease-out;
+}
+@keyframes simTipSlide {
+  from { opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0; }
+  to { opacity: 1; max-height: 200px; }
+}
+
+/* Pagination */
+.sim-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.sim-pagination span {
+  font-size: 0.82rem;
+  color: #aaa;
+  min-width: 50px;
+  text-align: center;
+}
+.sim-pagination button {
+  padding: 5px 14px;
+  font-size: 0.8rem;
+  background: rgba(55, 91, 189, 0.1);
+  color: #7b9cff;
+  border: 1px solid rgba(55, 91, 189, 0.2);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.sim-pagination button:hover:not(:disabled) {
+  background: #375bbd;
+  color: #fff;
+}
+.sim-pagination button:disabled {
+  opacity: 0.3;
+  cursor: default;
 }

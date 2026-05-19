@@ -1,4 +1,4 @@
-const API_BASE = 'https://crypto-backend-wheat.vercel.app/api';
+const API_BASE = import.meta.env.VITE_API_BASE || 'https://crypto-backend-wheat.vercel.app/api';
 
 async function request(method, path, body = null) {
   const token = localStorage.getItem('token');
@@ -73,6 +73,17 @@ export const getHistory = () => request('GET', '/simulator/history');
 export const setStopLoss = (crypto, price) =>
   request('POST', '/simulator/stop-loss', { crypto, price });
 export const getChartData = (symbol, days) => request('GET', `/simulator/chart/${symbol}?days=${days}`);
+
+// Futures
+export const getFuturesPortfolio = () => request('GET', '/futures/portfolio');
+export const openFuturesPosition = (crypto, direction, leverage, margin, takeProfit = null, stopLoss = null) =>
+  request('POST', '/futures/open', { crypto, direction, leverage, margin, takeProfit, stopLoss });
+export const closeFuturesPosition = (positionId) =>
+  request('POST', '/futures/close', { positionId });
+export const updateFuturesOrders = (positionId, takeProfit, stopLoss) =>
+  request('PUT', '/futures/orders', { positionId, takeProfit, stopLoss });
+export const getFuturesHistory = () => request('GET', '/futures/history');
+export const getFuturesPriceTick = () => request('GET', '/futures/tick');
 
 // Admin
 export const getAdminStats = () => request('GET', '/admin/stats');

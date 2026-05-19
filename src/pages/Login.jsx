@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { usePoints } from '../context/PointsContext'
 import bgImage from '../assets/bg-mountain.jpg'
 
 export default function Login() {
@@ -12,6 +13,7 @@ export default function Login() {
   const [showGreeting, setShowGreeting] = useState(true)
   const navigate = useNavigate()
   const { login } = useAuth()
+  const { refreshPoints } = usePoints()
 
   const canSubmit = email.trim() !== '' && password.trim() !== '' && !loading
 
@@ -27,6 +29,7 @@ export default function Login() {
     setLoading(true)
     try {
       const data = await login(email, password)
+      refreshPoints()
       navigate(data.isAdmin ? '/admin' : '/dashboard')
     } catch (err) {
       setError(err.message || 'Login failed')

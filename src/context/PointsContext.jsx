@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { getAchievements } from '../services/api'
+import { getProfile } from '../services/api'
 
 const PointsContext = createContext(null)
 
@@ -11,10 +11,8 @@ export function PointsProvider({ children }) {
 
   const refreshPoints = useCallback(async () => {
     try {
-      const achievements = await getAchievements()
-      const total = achievements
-        .filter(a => a.unlocked)
-        .reduce((sum, a) => sum + (a.rewardPoints || 0), 0)
+      const profile = await getProfile()
+      const total = profile.points || 0
       setPoints(total)
       localStorage.setItem('totalPoints', String(total))
     } catch {

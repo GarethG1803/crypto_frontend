@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
 import PriceChart from '../components/PriceChart'
 import TradeFeedback from '../components/TradeFeedback'
+import FuturesTrading from '../components/FuturesTrading'
 import { getPortfolio, executeTrade, getHistory, setStopLoss } from '../services/api'
 
 export default function Simulator() {
+  const [mode, setMode] = useState('spot')
   const [portfolio, setPortfolio] = useState({ balance: 10000, holdings: [], prices: {}, portfolioValue: 0, totalValue: 10000, pnl: 0, pnlPercent: 0, stopLosses: {}, triggeredStopLosses: [] })
   const [transactions, setTransactions] = useState([])
   const [selectedCrypto, setSelectedCrypto] = useState(0)
@@ -17,6 +19,7 @@ export default function Simulator() {
   const [stopLossPrice, setStopLossPrice] = useState('')
   const [stopLossEnabled, setStopLossEnabled] = useState(false)
   const [triggeredAlerts, setTriggeredAlerts] = useState([])
+  const [historyPage, setHistoryPage] = useState(0)
 
   const loadData = () => {
     Promise.all([getPortfolio(), getHistory()])
@@ -85,6 +88,34 @@ export default function Simulator() {
     }
   }
 
+  const handleSellAll = async (symbol) => {
+    const h = portfolio.holdings.find(h => h.symbol === symbol)
+    if (!h || h.amount <= 0) return
+    setError('')
+    try {
+      const result = await executeTrade(symbol, 'sell', h.amount)
+      if (result.feedback) setTradeFeedback(result.feedback)
+      loadData()
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
+  const handleSellAllHoldings = async () => {
+    if (portfolio.holdings.length === 0) return
+    setError('')
+    try {
+      for (const h of portfolio.holdings) {
+        if (h.amount > 0) {
+          await executeTrade(h.symbol, 'sell', h.amount)
+        }
+      }
+      loadData()
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
   const handleRemoveStopLoss = async (symbol) => {
     try {
       await setStopLoss(symbol, null)
@@ -98,17 +129,11 @@ export default function Simulator() {
 
   return (
     <Layout>
-      {/* Stop-Loss Triggered Alerts */}
-      {triggeredAlerts.length > 0 && (
-        <div className="sim-triggered-alerts">
-          {triggeredAlerts.map((sl, i) => (
-            <div key={i} className="sim-triggered-alert">
-              <span>Stop-loss triggered: Sold {sl.amount} {sl.symbol} at ${sl.executedPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })} (stop was ${sl.stopPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })})</span>
-              <button onClick={() => setTriggeredAlerts(prev => prev.filter((_, idx) => idx !== i))}>Dismiss</button>
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Mode Toggle */}
+      <div className="sim-mode-toggle">
+        <button className={`sim-mode-btn ${mode === 'spot' ? 'active' : ''}`} onClick={() => setMode('spot')}>Spot Trading</button>
+        <button className={`sim-mode-btn ${mode === 'futures' ? 'active' : ''}`} onClick={() => setMode('futures')}>Futures Trading</button>
+      </div>
 
       {/* Stats Row */}
       <div className="sim-stats">
@@ -132,6 +157,23 @@ export default function Simulator() {
           </span>
         </div>
       </div>
+
+      {mode === 'futures' && (
+        <FuturesTrading prices={portfolio.prices} balance={portfolio.balance} onTradeComplete={loadData} />
+      )}
+
+      {mode === 'spot' && <>
+      {/* Stop-Loss Triggered Alerts */}
+      {triggeredAlerts.length > 0 && (
+        <div className="sim-triggered-alerts">
+          {triggeredAlerts.map((sl, i) => (
+            <div key={i} className="sim-triggered-alert">
+              <span>Stop-loss triggered: Sold {sl.amount} {sl.symbol} at ${sl.executedPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })} (stop was ${sl.stopPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })})</span>
+              <button onClick={() => setTriggeredAlerts(prev => prev.filter((_, idx) => idx !== i))}>Dismiss</button>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Crypto Selector */}
       <div className="sim-crypto-selector">
@@ -173,6 +215,11 @@ export default function Simulator() {
           {rightTab === 'portfolio' ? (
             <div className="sim-portfolio-list">
               {portfolio.holdings.length === 0 && <p style={{padding:12,color:'#888'}}>No holdings yet</p>}
+              {portfolio.holdings.length > 0 && (
+                <div className="sim-sell-all-bar">
+                  <button className="sim-sell-all-btn" onClick={handleSellAllHoldings}>Sell All Holdings</button>
+                </div>
+              )}
               {portfolio.holdings.map((h) => (
                 <div key={h.symbol} className="sim-holding">
                   <div className="sim-holding-left">
@@ -190,6 +237,7 @@ export default function Simulator() {
                     <span className={`sim-holding-change ${(h.pnl || 0) >= 0 ? 'up' : 'down'}`}>
                       {(h.pnl || 0) >= 0 ? '+' : ''}{(h.pnl || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
                     </span>
+                    <button className="sim-sell-one-btn" onClick={() => handleSellAll(h.symbol)}>Sell</button>
                   </div>
                 </div>
               ))}
@@ -197,7 +245,7 @@ export default function Simulator() {
           ) : (
             <div className="sim-portfolio-list">
               {transactions.length === 0 && <div className="sim-history-empty"><p>No trading history yet</p></div>}
-              {transactions.map((t) => (
+              {transactions.slice(historyPage * 10, historyPage * 10 + 10).map((t) => (
                 <div key={t.id} className="sim-holding">
                   <div className="sim-holding-left">
                     <span className="sim-holding-symbol" style={{color: t.type === 'buy' ? '#22c55e' : '#ef4444'}}>
@@ -211,6 +259,13 @@ export default function Simulator() {
                   </div>
                 </div>
               ))}
+              {transactions.length > 10 && (
+                <div className="sim-pagination">
+                  <button disabled={historyPage === 0} onClick={() => setHistoryPage(p => p - 1)}>Prev</button>
+                  <span>{historyPage + 1} / {Math.ceil(transactions.length / 10)}</span>
+                  <button disabled={historyPage >= Math.ceil(transactions.length / 10) - 1} onClick={() => setHistoryPage(p => p + 1)}>Next</button>
+                </div>
+              )}
             </div>
           )}
 
@@ -303,6 +358,7 @@ export default function Simulator() {
 
       {/* Trade Feedback Modal */}
       <TradeFeedback feedback={tradeFeedback} onClose={() => setTradeFeedback(null)} />
+      </>}
     </Layout>
   )
 }

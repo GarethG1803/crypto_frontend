@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 import { getAchievements, getProgress, changePassword, checkUsername, uploadProfilePicture } from '../services/api'
 import { useAuth } from '../context/AuthContext'
+import { usePoints } from '../context/PointsContext'
 import trophyIcon from '../assets/trophy.png'
 import lessonsIcon from '../assets/lessons-completed.png'
 import thunderIcon from '../assets/thunder.png'
@@ -151,7 +152,8 @@ export default function Profile() {
   const locked = achievements.filter(a => !a.unlocked)
   const lessonsCompleted = progress.filter(p => p.lessonCompleted).length
   const perfectQuizzes = progress.filter(p => p.quizScore === 100).length
-  const totalPoints = unlocked.reduce((sum, a) => sum + (a.rewardPoints || 0), 0)
+  const { points: topbarPoints } = usePoints()
+  const totalPoints = topbarPoints
 
   const handleLogout = () => {
     logout()

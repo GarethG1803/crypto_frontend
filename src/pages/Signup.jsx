@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { usePoints } from '../context/PointsContext'
 import { checkUsername } from '../services/api'
 import bgImage from '../assets/bg-mountain.jpg'
 
@@ -18,6 +19,7 @@ export default function Signup() {
   const debounceRef = useRef(null)
   const navigate = useNavigate()
   const { signup } = useAuth()
+  const { refreshPoints } = usePoints()
 
   const hasMinLength = password.length >= 8
   const hasUppercase = /[A-Z]/.test(password)
@@ -64,6 +66,7 @@ export default function Signup() {
     setLoading(true)
     try {
       await signup(name, email, password)
+      refreshPoints()
       navigate('/dashboard')
     } catch (err) {
       setError(err.message || 'Signup failed')
